@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>Raspberry Pi Control</title>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.4/raphael-min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/justgage/1.2.9/justgage.min.js"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <script src="https://code.iconify.design/2/2.1.2/iconify.min.js"></script>
+
+    <script src="https://bernii.github.io/gauge.js/dist/gauge.min.js"></script>
+
+    <link href='https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css' rel='stylesheet'>
+
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.2/mqttws31.min.js"
+        type="text/javascript"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+
+<style>
+    .roundElement {
+        border-radius: 20px;
+    }
+
+    h3 {
+        text-align: center;
+    }
+</style>
+
+<body id="body-pd">
+
+    <header class="header" id="header">
+        <div class="header__toggle">
+            <i class='bx bx-menu' id="header-toggle"></i>
+        </div>
+
+        <div class="input-field col s12">
+            <h4>
+                Hệ thống điều khiển cho nhà nuôi chim yến
+            </h4>
+        </div>
+
+
+        <div class="header__img ">
+        </div>
+    </header>
+
+
+
+    <div class="l-navbar_1 " id="nav-bar">
+        <div class="nav">
+            <div>
+                <a href="# " class="nav__logo ">
+                    <i class='bx bx-layer nav__logo-icon'></i>
+                    <span class="nav__logo-name ">Hệ thống điều khiển cho nhà nuôi chim yến</span>
+                </a>
+
+                <div id="menu" lass="nav__list ">
+
+                    <a id="menu_info" class="nav__link ">
+                        <i id="menu_info" class='bx bx-info-circle nav__icon'></i>
+                        <span id="menu_info" class="nav__name ">Thông tin</span>
+                    </a>
+
+                    <a id="menu_info_enviroment" class="nav__link active ">
+                        <i id="menu_info_enviroment" class='bx bx-grid-alt nav__icon'></i>
+                        <span id="menu_info_enviroment" class="nav__name ">Thông số cảm biến</span>
+                    </a>
+
+                    <a id="menu_history" class="nav__link ">
+                        <i id="menu_history" class='bx bx-history nav__icon'></i>
+                        <span id="menu_history" class="nav__name ">Lịch sử</span>
+                    </a>
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <br>
+    <br>
+    <br>
+
+    <div class="">
+        <div id="enviroment_id" style="display: none; width: 100%;">
+
+            <div class="row ">
+
+                <div class="col s12 m6">
+                    <div class="col s6 m12">
+                        <div class="col s6 m3">
+                            <div class="card teal roundElement" style="width:100%; height: 120px; max-height: 120px;">
+                                <div class="card-content white-text">
+                                    <p>Nhiệt độ</p>
+                                    <div class="center">
+                                        <p id="sensor_temp_value"> 20 C </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col s6 m3">
+                            <div class="card teal roundElement" style="width:100%; height: 120px; max-height: 120px;">
+                                <div class="card-content white-text">
+                                    <p>Độ ẩm</p>
+                                    <p class="center" id="sensor_hum_value">
+                                        79 %
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col s6 m3">
+                            <div class="card teal roundElement" style="width:100%; height: 120px; max-height: 120px;">
+                                <div class="card-content white-text">
+                                    <p>Độ sáng</p>
+                                    <div class="center">
+                                        <p id="sensor_light_value"> 98 lux </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col s6 m3">
+                            <div class="card white roundElement" style="width:100%; height: 120px; max-height: 120px;">
+                                <div class="card-content black-text">
+                                    <div class="switch center">
+                                        <p>Chế độ</p>
+                                    </div>
+                                    <div class="switch center">
+                                        <label>
+                                            A
+                                            <input id="mode_btn" type="checkbox">
+                                            <span class="lever"></span>
+                                            M
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col s6 m3">
+                            <div class="card white roundElement" style="width:100%; height: 120px; max-height: 120px;">
+                                <div class="card-content black-text">
+                                    <div class="switch center">
+                                        <p>Quạt</p>
+                                        <p id="indicator_1">🔴</p>
+                                    </div>
+                                    <div class="switch center">
+                                        <label>
+                                            <input id="relay1" type="checkbox">
+                                            <span class="lever"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col s6 m3">
+                            <div class="card white roundElement" style="width:100%; height: 120px; max-height: 120px;">
+                                <div class="card-content black-text">
+
+                                    <div class="switch center">
+                                        <p>Phun sương</p>
+                                        <p id="indicator_2">🔴</p>
+                                    </div>
+                                    <div class="switch center">
+                                        <label>
+                                            <input id="relay2" type="checkbox">
+                                            <span class="lever"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col s6 m3">
+                            <div class="card white roundElement" style="width:100%; height: 120px; max-height: 120px;">
+                                <div class="card-content black-text">
+                                    <div class="switch center">
+                                        <p>Tiếng chim</p>
+                                        <p id="indicator_3">🔴</p>
+                                    </div>
+                                    <div class="switch center">
+                                        <label>
+                                            <input id="relay3" type="checkbox">
+                                            <span class="lever"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col s6 m3">
+                            <div class="card white roundElement" style="width:100%; height: 120px; max-height: 120px;">
+                                <div class="card-content black-text">
+                                    <div class="switch center">
+                                        <p>Đèn</p>
+                                        <p id="indicator_4">🔴</p>
+                                    </div>
+                                    <div class="switch center">
+                                        <label>
+                                            <input id="relay4" type="checkbox">
+                                            <span class="lever"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col s12 m12">
+                        <div class="card white roundElement" >
+                            <div class="card-content black-text">
+                                <canvas id="mychart" style="width:100%;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="col s6 m6">
+                    <div class="col s6 m12">
+                        <div class="card white roundElement"
+                            style=" width:100%; height: 300px; max-height: 300px; ">
+                            <div class="card-content black-text">
+                                <div class="switch">
+                                    <img src="{{ url_for('video_feed') }}" width="100%" height="250px">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col s6 m12">
+
+                        <div class="card white roundElement"
+                            style="width:100%; height: 300px; max-height: 300px;  overflow-y: scroll;">
+                            {% for imagelist in imagelist %}
+                            <div class="col s6 m3">
+                                <span class="card-title centered">
+                                    <div class="switch">
+                                        <img src="{{ url_for('static', filename=imagelist)}}" width="80px"
+                                            height="80px">
+                                    </div>
+                                </span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="history_id" style="display: none;">
+        <div class="row ">
+            <div class="s12">
+                <div class="input-field col s10">
+                    <input type="text" class="datepicker" id="datepicker_history">
+                    <label for="timepicker">Chọn ngày lấy dữ liệu</label>
+                </div>
+                <div class="col s2" style="margin-top: 20px;">
+                    <button class="btn waves-effect waves-light" id="get_history_btn" name="action">Xong
+                        <i class="material-icons right">send</i>
+                    </button>
+                </div>
+            </div>
+
+
+            <div class="col s12 m12">
+                <div class="card white roundElement" style=" height: 100%; max-height: 700px; overflow-y: scroll;">
+                    <div class="card-content black-text responsive-table">
+
+                        <span class="card-title center-align">
+                            <h4 id="name_history_table">Raspberry</h4>
+                        </span>
+                        <br>
+                        <table id="history_table_id" class="centered" style="overflow: hidden;">
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="info_id" style="display: none;">
+        <div class=row>
+            <div class="col s12 m12 ">
+                <div class="card white roundElement">
+                    <div class="card-content black-text">
+                        
+                        <br>
+                        <center>
+                            <span class="card-title">
+                                <h4>THEO DÕI NHÀ NUÔI YẾN TRÊN NỀN TẢNG IoT TRONG THỜI ĐẠI CÁCH MẠNG 4.0 </h4>
+                            </span>
+                        </center>
+
+                        <br>
+                        
+                        <br>
+                        <center>
+                            <span class="card-title">GVHD: Thạc sĩ: Nguyễn Văn Quang </span>
+                        </center>
+                       
+                        <br>
+                        <center>
+                            <span class="card-title">SVTH1: Phan Đức Tín</span>
+                            <span class="card-title">MSSV: 19000625</span>
+                        </center>
+                        
+                        <br>
+                        <center>
+                            <span class="card-title">SVTH2: Lê Hùng Cường</span>
+                            <span class="card-title">MSSV: 19000265</span>
+                        </center>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+    <script type="module">
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        // const config = {
+        //     apiKey: "AIzaSyBk2_NFjSISaKGtSb0ktJ2_s5mhbLrWKOU",
+        //     authDomain: "hethongchieusang-ab35b.firebaseapp.com",
+        //     databaseURL: "https://hethongchieusang-ab35b-default-rtdb.firebaseio.com",
+        //     projectId: "hethongchieusang-ab35b",
+        //     storageBucket: "hethongchieusang-ab35b.appspot.com",
+        //     messagingSenderId: "987734195137",
+        //     appId: "1:987734195137:web:bea8401a61cefbf0b70d40",
+        //     measurementId: "G-2ZT6ZRTQ7D"
+        // };
+        const config = {
+            apiKey: "AIzaSyAO2hdGpSVd03XdbNEK7U78nNAoNj_BdCE",
+            authDomain: "swiftlethouse-4b7e3.firebaseapp.com",
+            databaseURL: "https://swiftlethouse-4b7e3-default-rtdb.firebaseio.com",
+            projectId: "swiftlethouse-4b7e3",
+            storageBucket: "swiftlethouse-4b7e3.appspot.com",
+            messagingSenderId: "360683253496",
+            appId: "1:360683253496:web:87216e923d83e729a0950d",
+            measurementId: "G-6S148B2T8W"
+        };
+
+        firebase.initializeApp(config);
+        var database = firebase.database();
+
+        import sweetalert2 from 'https://cdn.jsdelivr.net/npm/sweetalert2@8/+esm'
+
+        var today = new Date();
+        var m = today.getMonth() + 1
+        if (m < 10) {
+            m = "0" + m;
+        }
+
+        var d = today.getDate()
+        if (d < 10) {
+            d = "0" + d;
+        }
+
+        const clientID = "clientID-" + parseInt(Math.random() * 100);
+        const host = "broker.hivemq.com"
+        const port = "8000";
+
+        const client = new Paho.MQTT.Client(host, Number(port), clientID);
+
+        function connect_mqtt() {
+            client.onConnectionLost = onConnectionLost;
+            client.onMessageArrived = onMessageArrived;
+            client.connect({
+                onSuccess: onConnect,
+                useSSL: false,
+                userName: '',
+                password: '',
+            });
+        }
+
+        connect_mqtt()
+
+
+
+
+        var topic_device_1 = "data/sensor"
+
+        function sendMQTT(topic, value) {
+            if (client.isConnected()) {
+                var message = new Paho.MQTT.Message(value);
+                message.destinationName = topic;
+                client.send(message);
+            }
+        }
+
+        function onConnect() {
+            console.log("onConnect");
+            subscribe(topic_device_1)
+        }
+
+        function subscribe(topic) {
+            client.subscribe(topic);
+        }
+
+        function unsubscribe(topic) {
+            client.unsubscribe(topic);
+        }
+
+        function onConnectionLost(responseObject) {
+            console.log("onConnectionLost: Connection Lost");
+            if (responseObject.errorCode !== 0) {
+                console.log("onConnectionLost: " + responseObject.errorMessage);
+            }
+            connect_mqtt()
+        }
+
+        function map_range(value, low1, high1, low2, high2) {
+            return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+        }
+
+        var isUpdateTime = true;
+        function onMessageArrived(message) {
+            const jsonString = message.payloadString
+            const json_parse = JSON.parse(jsonString)
+
+            console.log(json_parse)
+            var _temp = json_parse.temp
+            var _hum = json_parse.hum
+            var _light = json_parse.lightss
+            var speaker = json_parse.speaker
+            var fan = json_parse.fan
+            var mist = json_parse.mist
+            var mode = json_parse.mode
+            var light = json_parse.light
+
+            if (_light == null) {
+                _light = 0
+            }
+
+            // console.log(_temp, _hum);
+            document.getElementById("sensor_temp_value").innerHTML = _temp + " °C"
+            document.getElementById("sensor_hum_value").innerHTML = _hum + " %"
+            document.getElementById("sensor_light_value").innerHTML = _light + " lux"
+
+            mode_btn.checked = mode
+            disable_button(mode_btn.checked)
+
+            document.getElementById("indicator_1").innerText = fan == 1 ? '🟢' : '🔴';
+            document.getElementById("indicator_2").innerText = mist == 1 ? '🟢' : '🔴';
+            document.getElementById("indicator_3").innerText = speaker == 1 ? '🟢' : '🔴';
+            document.getElementById("indicator_4").innerText = light == 1 ? '🟢' : '🔴';
+
+            var today = new Date();
+            var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+            var _date = today.getDay() + "-" + today.getMonth() + "-" + today.getFullYear();
+
+
+            y_values_temp.push(_temp);
+            if (y_values_temp.length > 10) {
+                y_values_temp.shift();
+            }
+
+            x_values_temp_time.push(time);
+            if (x_values_temp_time.length > 10) {
+                x_values_temp_time.shift();
+            }
+
+
+            y_values_light.push(_light);
+            if (y_values_light.length > 10) {
+                y_values_light.shift();
+            }
+
+
+            y_values_humi.push(_hum);
+            if (y_values_humi.length > 10) {
+                y_values_humi.shift();
+            }
+
+            mychart.update();
+
+        }
+
+        const relay_1_btn = document.getElementById('relay1')
+        const relay_2_btn = document.getElementById('relay2')
+        const relay_3_btn = document.getElementById('relay3')
+        const relay_4_btn = document.getElementById('relay4')
+        const mode_btn = document.getElementById('mode_btn')
+        const get_history_btn = document.getElementById('get_history_btn')
+        const datepicker_history = document.getElementById("datepicker_history");
+
+        mode_btn.onclick = function () {
+            if (document.getElementById('mode_btn').checked == false) {
+                disable_button(false)
+            } else {
+                disable_button(true)
+            }
+            sendControl()
+        }
+
+        relay_1_btn.onclick = function () {
+            sendControl()
+        }
+        relay_2_btn.onclick = function () {
+            sendControl()
+        }
+        relay_3_btn.onclick = function () {
+            sendControl()
+        }
+        relay_4_btn.onclick = function () {
+            sendControl()
+        }
+
+        get_history_btn.onclick = function () {
+            var date = datepicker_history.value;
+            // var gateway = select_device_input.value;
+
+            if (date.length > 0) {
+                var table = document.getElementById("history_table_id")
+                table.innerHTML = "";
+                var header = table.createTHead();
+
+                // create body
+                var body = table.createTBody();
+
+
+                document.getElementById("name_history_table").innerHTML = "Raspberry";
+                var row = header.insertRow(0);
+                var cell = row.insertCell(0);
+                cell.style.textAlign = "center";
+                cell.innerHTML = "<b>Time</b>";
+                cell.style.width = "20%";
+                cell = row.insertCell(1);
+                cell.style.textAlign = "center";
+                cell.innerHTML = "<b>Temp</b>";
+                cell.style.width = "20%";
+                cell = row.insertCell(2);
+                cell.style.textAlign = "center";
+                cell.innerHTML = "<b>Hum</b>";
+                cell.style.width = "20%";
+                cell = row.insertCell(3);
+                cell.style.textAlign = "center";
+                cell.innerHTML = "<b>Light.SS</b>";
+                cell.style.width = "20%";
+                cell = row.insertCell(4);
+                cell.style.textAlign = "center";
+                cell.innerHTML = "<b>Mode</b>";
+                cell.style.width = "20%";
+
+                cell = row.insertCell(5);
+                cell.style.textAlign = "center";
+                cell.innerHTML = "<b>Mist</b>";
+                cell.style.width = "20%";
+
+                cell = row.insertCell(6);
+                cell.style.textAlign = "center";
+                cell.innerHTML = "<b>Speaker</b>";
+                cell.style.width = "20%";
+
+                cell = row.insertCell(7);
+                cell.style.textAlign = "center";
+                cell.innerHTML = "<b>Fan</b>";
+                cell.style.width = "20%";
+
+                cell = row.insertCell(8);
+                cell.style.textAlign = "center";
+                cell.innerHTML = "<b>Light</b>";
+                cell.style.width = "20%";
+
+
+                var listen_device = database.ref("history/" + date);
+
+                listen_device.once('value', function (snapshot) {
+                    console.log(snapshot.val());
+                    const data = snapshot.val();
+                    const json = JSON.stringify(data)
+                    const json_parse = JSON.parse(json)
+
+
+                    // console.log(json_parse.key)
+                    for (let key in json_parse) {
+                        var row = body.insertRow();
+
+                        var cell = row.insertCell(0);
+                        cell.style.textAlign = "center";
+                        cell.style.width = "20%";
+                        cell.innerHTML = json_parse[key].time
+                        cell = row.insertCell(1);
+                        cell.style.textAlign = "center";
+                        cell.style.width = "20%";
+                        cell.innerHTML = json_parse[key].temp
+                        cell = row.insertCell(2);
+                        cell.style.textAlign = "center";
+                        cell.style.width = "20%";
+                        cell.innerHTML = json_parse[key].hum
+                        cell = row.insertCell(3);
+                        cell.style.textAlign = "center";
+                        cell.style.width = "20%";
+                        cell.innerHTML = json_parse[key].lightss
+                        cell = row.insertCell(4);
+                        cell.style.textAlign = "center";
+                        cell.style.width = "20%";
+                        cell.innerHTML = json_parse[key].mode ? "Auto" : "Manual"
+
+                        cell = row.insertCell(5);
+                        cell.style.textAlign = "center";
+                        cell.style.width = "20%";
+                        cell.innerHTML = json_parse[key].mist ? "ON" : "OFF"
+
+                        cell = row.insertCell(6);
+                        cell.style.textAlign = "center";
+                        cell.style.width = "20%";
+                        cell.innerHTML = json_parse[key].speaker ? "ON" : "OFF"
+
+                        cell = row.insertCell(7);
+                        cell.style.textAlign = "center";
+                        cell.style.width = "20%";
+                        cell.innerHTML = json_parse[key].fan ? "ON" : "OFF"
+
+                        cell = row.insertCell(8);
+                        cell.style.textAlign = "center";
+                        cell.style.width = "20%";
+                        cell.innerHTML = json_parse[key].light ? "ON" : "OFF"
+
+                    }
+                });
+
+                console.log("on firebase value: " + listen_device)
+
+            } else {
+                alert("Please select date")
+            }
+
+
+        }
+
+
+
+        function sendControl() {
+            var topic_send = "data/control"
+            var data = {
+                mode: mode_btn.checked ? 1 : 0,
+                fan: relay_1_btn.checked ? 1 : 0,
+                mist: relay_2_btn.checked ? 1 : 0,
+                light: relay_4_btn.checked ? 1 : 0,
+                speaker: relay_3_btn.checked ? 1 : 0
+            }
+            var json = JSON.stringify(data)
+            sendMQTT(topic_send, json)
+            console.log(json)
+            console.log(topic_send)
+        }
+
+        function disable_button(state) {
+            document.getElementById("relay1").disabled = state
+            document.getElementById("relay2").disabled = state
+            document.getElementById("relay3").disabled = state
+            document.getElementById("relay4").disabled = state
+        }
+
+        var y_values_humi = [0];
+        var y_values_temp = [0];
+        var x_values_temp_time = [0];
+        var y_values_light = [0];
+
+
+        var mychart = new Chart("mychart", {
+            type: "line",
+            data: {
+                labels: x_values_temp_time,
+                datasets: [{
+                    label: "Nhiệt độ",
+                    data: y_values_temp,
+                    backgroundColor: [
+                        'rgba(255,255,0, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(128,128,0, 1)',
+                    ],
+                    borderWidth: 1
+                },
+                {
+                    label: "Độ ẩm",
+                    data: y_values_humi,
+                    backgroundColor: [
+                        'rgba(255,0,0, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(128,128,0, 1)',
+                    ],
+                    borderWidth: 1
+                },
+                {
+                    label: "Độ sáng",
+                    data: y_values_light,
+                    backgroundColor: [
+                        'rgba(0,255,0, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(128,128,0, 1)',
+                    ],
+                    borderWidth: 1
+                }
+                ]
+            }
+        });
+
+
+
+        async function setText(location, value) {
+            // Pause execution of this async function for 2 seconds
+            await sleep(50);
+            var e = document.querySelector(location)
+
+            if (e == null) {
+                setText(location, value)
+            } else {
+                e.innerHTML = `<span class="text">${value}</span>`;
+            }
+        }
+
+        $(document).ready(function () {
+
+            $('select:not([multiple])').material_select();
+            var elems_datepicker = document.querySelectorAll('.datepicker');
+            var instances_datepicker = M.Datepicker.init(elems_datepicker, {
+                format: 'dd-mm-yyyy'
+            });
+
+            // $('.timepicker').timepicker();
+            var elems = document.querySelectorAll('.timepicker');
+            var instances = M.Timepicker.init(elems, {
+                twelveHour: false,
+                format: 'HH:mm:ss',
+                i18n: {
+                    clear: 'Xóa',
+                    cancel: 'Hủy',
+                    done: 'Xong',
+                    twelveHour: false,
+                    format: 'hh:mm:ss'
+                }
+            });
+
+            $('.timepicker').on('change', function () {
+                let receivedVal = $(this).val();
+                $(this).val(receivedVal + ":00");
+            });
+            // document.getElementById("enviroment_id").style.display = "block";
+            document.getElementById("info_id").style.display = "none";
+            document.getElementById("enviroment_id").style.display = "block";
+            // document.getElementById("chart_id").style.display = "none";
+            // document.getElementById("control_id").style.display = "none";
+            document.getElementById("history_id").style.display = "none";
+            // document.getElementById("mender_update_id").style.display = "none";
+
+        });
+
+
+
+    </script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>

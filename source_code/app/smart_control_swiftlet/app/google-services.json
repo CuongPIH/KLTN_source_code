@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "360683253496",
+    "project_id": "swiftlethouse-4b7e3",
+    "storage_bucket": "swiftlethouse-4b7e3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:360683253496:android:8010ed7e82f4f37ea0950d",
+        "android_client_info": {
+          "package_name": "com.example.smart_control_swiftlet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "360683253496-1p5eve770fr6msmmb4vnc50jdee7a3l5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBl1YW2JwEBvLdkypWhfLQqdE8_kHSmoUI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "360683253496-1p5eve770fr6msmmb4vnc50jdee7a3l5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

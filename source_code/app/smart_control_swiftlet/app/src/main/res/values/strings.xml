@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">smart_control_swiftlet</string>
+    <string name="mqtt_hint">Type a message for MQTT!</string>
+    <string name="send">Send!</string>
+</resources>
